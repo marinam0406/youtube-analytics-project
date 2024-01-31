@@ -1,11 +1,16 @@
 import json
 import os
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
+from config import FILE_NAME
 
+BASE_DIR = load_dotenv(FILE_NAME)
+
+API_KEY: str = os.getenv('API_KEY')
 
 class Channel:
     """Класс для ютуб-канала"""
-    API_KEY: str = os.getenv('API_KEY')
+
     youtube = build('youtube', 'v3', developerKey=API_KEY)
 
     def __init__(self, channel_id: str) -> None:
@@ -18,6 +23,33 @@ class Channel:
         self.subscriber_count = self.channel["items"][0]["statistics"]["subscriberCount"]
         self.video_count = self.channel["items"][0]["statistics"]["videoCount"]
         self.view_count = self.channel["items"][0]["statistics"]["viewCount"]
+
+    def __str__(self):
+        return f"{self.title} ({self.url})"
+
+    def __add__(self, other):  # сложение
+        return int(self.subscriber_count) + int(other.subscriber_count)
+
+    def __sub__(self, other):  # вычитание
+        return int(self.subscriber_count) - int(other.subscriber_count)
+
+    def __sub__(self, other):  # вычитание
+        return int(other.subscriber_count) - int(self.subscriber_count)
+
+    def __gt__(self, other):  # больше
+        return int(self.subscriber_count) > int(other.subscriber_count)
+
+    def __ge__(self, other):  # больше или равно
+        return int(self.subscriber_count) >= int(other.subscriber_count)
+
+    def __lt__(self, other):  # меньше
+        return int(self.subscriber_count) < int(other.subscriber_count)
+
+    def __le__(self, other):  # меньше или равно
+        return int(self.subscriber_count) <= int(other.subscriber_count)
+
+    def __eq__(self, other):  # равно
+        return int(self.subscriber_count) == int(other.subscriber_count)
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
